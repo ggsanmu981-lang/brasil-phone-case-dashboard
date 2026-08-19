@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>利润核价表 · 美客多</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="logo">💰</div>
+      <div>
+        <h1>利润核价表</h1>
+        <div class="sub">美客多核价测算 · 成本/费用/利润自动计算</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a class="btn btn-ghost" href="seller.html">🏪 店铺后台</a>
+      <a class="btn btn-ghost" href="index.html">📊 市场分析</a>
+      <a class="btn btn-ghost" href="diagnose.html">🔍 智能诊断</a>
+      <button class="btn btn-ghost" id="btn-export">📤 导出 CSV</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- 参数设置 -->
+  <div class="panel col-12" style="margin-bottom:16px">
+    <h2>参数设置</h2>
+    <div class="panel-desc">汇率 = 雷亚尔/人民币（1 元 = ? 雷亚尔，当前 0.77）；平台费用 = 类目扣点18% + 交易费3% + 分期付款费3% + 记账报税1%（合计25%，可编辑）；退货费用按 成本×(1-签收率) 计算；保本CPA=(售价-所有费用)×0.92</div>
+    <div class="param-grid" id="param-grid">
+      <div class="filter-group"><label>汇率（雷亚尔/人民币）</label><input id="p-rate" type="number" step="0.001" value="0.84"></div>
+      <div class="filter-group"><label>订单操作费（雷亚尔）</label><input id="p-orderfee" type="number" step="0.1" value="4"></div>
+      <div class="filter-group"><label>其他扣费系数</label><input id="p-other" type="number" step="0.01" value="0.92"></div>
+      <div class="filter-group"><label>出价系数</label><input id="p-bid" type="number" step="0.01" value="0.9"></div>
+      <div class="filter-group"><label>默认签收率</label><input id="p-delivery" type="number" step="0.01" value="0.9"></div>
+      <div class="filter-group"><label>默认预期 ROI</label><input id="p-roi" type="number" step="0.1" value="10"></div>
+      <div class="filter-group"><label>目标毛利率（%）反推售价</label><input id="p-target" type="number" step="0.5" value="50"></div>
+    </div>
+    <div class="param-grid" style="margin-top:12px">
+      <div class="fee-box">
+        <div class="fee-head">平台费用明细</div>
+        <div id="fee-list"></div>
+        <button class="btn btn-soft btn-sm" id="fee-add">＋ 添加费用项</button>
+        <div class="fee-total">费用汇总：<b id="fee-total">27.5%</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 汇总 -->
+  <section class="kpi-grid">
+    <div class="kpi-card" id="s-rows"><div class="kpi-label"><span class="kpi-icon">📦</span>核价商品数</div><div class="kpi-value">–</div><div class="kpi-sub">当前表格行数</div></div>
+    <div class="kpi-card" id="s-gross"><div class="kpi-label"><span class="kpi-icon">📐</span>平均毛利率</div><div class="kpi-value">–</div><div class="kpi-sub">（售价-所有费用）÷ 售价</div></div>
+    <div class="kpi-card" id="s-margin"><div class="kpi-label"><span class="kpi-icon">💎</span>平均预期毛利率</div><div class="kpi-value">–</div><div class="kpi-sub">按预期 ROI 计算</div></div>
+    <div class="kpi-card" id="s-roi"><div class="kpi-label"><span class="kpi-icon">🛡️</span>平均保本 ROI</div><div class="kpi-value">–</div><div class="kpi-sub">低于此值会亏</div></div>
+    <div class="kpi-card" id="s-suggest"><div class="kpi-label"><span class="kpi-icon">🎯</span>目标毛利率建议</div><div class="kpi-value">–</div><div class="kpi-sub">达到目标毛利率所需售价</div></div>
+  </section>
+
+  <!-- 核价表 -->
+  <div class="panel col-12" style="margin-top:16px">
+    <div class="rank-toolbar">
+      <h2 style="margin:0">核价表</h2>
+      <button class="btn btn-soft btn-sm" id="btn-add">＋ 添加一行</button>
+      <button class="btn btn-ghost btn-sm" id="btn-sample">🔄 载入示例</button>
+      <button class="btn btn-ghost btn-sm" id="btn-clear">🗑 清空</button>
+      <span class="muted" id="save-tip">已自动保存到本机</span>
+    </div>
+    <div class="table-wrap" style="max-height:620px;overflow:auto">
+      <table class="data-table calc-table">
+        <thead id="calc-head"></thead>
+        <tbody id="calc-body"></tbody>
+      </table>
+    </div>
+    <div class="hint" style="margin-top:10px">
+      计算逻辑（与你的「巴西美客多」核价表一致）：<b>成本(¥)×汇率</b> = 成本(纯成本)；<b>平台费用 = 售价×25%</b>（类目扣点/交易费/分期/记账报税）；<b>退货费用 = (成本-优惠券)×(1-签收率)</b>；<b>所有费用 = 成本+操作费固定+平台费用+退货费用+广告费</b>；保本CPA=(售价-所有费用)×0.92；保本ROI=售价÷保本CPA；预期毛利=保本CPA-售价÷预期ROI；建议售价按「目标毛利率」反推。
+    </div>
+  </div>
+</main>
+
+<footer class="app-footer">
+  核价数据仅保存在本机浏览器 · 支持导入/导出 CSV
+</footer>
+
+<script src="js/pricing-app.js"></script>
+</body>
+</html>
