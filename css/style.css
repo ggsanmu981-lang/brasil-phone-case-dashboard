@@ -453,3 +453,6 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .calc-table th.group-th.withad { background: rgba(255,214,10,.08); color: #ffe66d; }
 .calc-cell.noad { color: #9fe8c6; }
 .calc-cell.withad { color: #ffe08a; }
+
+.calc-table th.col-input { background: rgba(0,229,255,.07); color: #9fe8ff; }
+.calc-table .col-note { font-size: 10px; color: var(--muted); font-weight: 400; margin-left: 2px; }
