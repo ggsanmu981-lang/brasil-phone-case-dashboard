@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>美客多店铺后台数据分析</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="logo">🏪</div>
+      <div>
+        <h1>美客多店铺后台数据分析</h1>
+        <div class="sub">我的店铺经营分析 · Mercado Livre Seller</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a class="btn btn-ghost" href="index.html">📊 返回市场分析</a>
+      <a class="btn btn-primary" href="diagnose.html">🔍 智能诊断</a>
+      <button class="btn btn-ghost" id="btn-sample">🔄 载入示例</button>
+      <button class="btn btn-ghost" id="btn-import">📥 导入数据</button>
+      <button class="btn btn-ghost" id="btn-export">📤 导出 CSV</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- 指标卡 -->
+  <section class="kpi-grid">
+    <div class="kpi-card" id="kpi-revenue">
+      <div class="kpi-label"><span class="kpi-icon">💰</span>总销售额</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+    <div class="kpi-card" id="kpi-profit">
+      <div class="kpi-label"><span class="kpi-icon">📈</span>总利润</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+    <div class="kpi-card" id="kpi-margin">
+      <div class="kpi-label"><span class="kpi-icon">🧮</span>利润率</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+    <div class="kpi-card" id="kpi-orders">
+      <div class="kpi-label"><span class="kpi-icon">🧾</span>订单数</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+    <div class="kpi-card" id="kpi-aov">
+      <div class="kpi-label"><span class="kpi-icon">🛒</span>平均客单价</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+    <div class="kpi-card" id="kpi-roas">
+      <div class="kpi-label"><span class="kpi-icon">📣</span>广告 ROAS</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+    <div class="kpi-card" id="kpi-products">
+      <div class="kpi-label"><span class="kpi-icon">📦</span>在售商品（SKU）</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+    <div class="kpi-card" id="kpi-conv">
+      <div class="kpi-label"><span class="kpi-icon">🎯</span>平均转化率</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+  </section>
+
+  <!-- 筛选 -->
+  <section class="filter-bar">
+    <div class="filter-group">
+      <label>开始日期</label>
+      <input id="f-date-from" type="date">
+    </div>
+    <div class="filter-group">
+      <label>结束日期</label>
+      <input id="f-date-to" type="date">
+    </div>
+    <div class="filter-group">
+      <label>品类</label>
+      <select id="f-category"></select>
+    </div>
+    <div class="filter-group">
+      <label>订单状态</label>
+      <select id="f-status">
+        <option value="all">全部状态</option>
+        <option value="Concluída">已完成</option>
+        <option value="Enviada">已发货</option>
+        <option value="Pendente">待处理</option>
+        <option value="Cancelada">已取消</option>
+        <option value="Devolvida">已退货</option>
+      </select>
+    </div>
+    <div class="filter-group search">
+      <label>关键词</label>
+      <input id="f-keyword" type="text" placeholder="搜 SKU / 标题…">
+    </div>
+    <button class="btn btn-soft filter-reset" id="btn-reset">↺ 重置筛选</button>
+  </section>
+
+  <div class="summary-strip" id="summary-strip"></div>
+  <div class="muted" id="range-info" style="font-size:12px;margin:2px 2px 14px"></div>
+
+  <section class="charts-grid">
+
+    <div class="panel col-8">
+      <h2>销售额趋势</h2>
+      <div class="panel-desc">按日销售额汇总</div>
+      <div class="rank-toolbar">
+        <div class="filter-group">
+          <label>时间范围</label>
+          <select id="trend-days">
+            <option value="30">近 30 天</option>
+            <option value="60" selected>近 60 天</option>
+            <option value="90">近 90 天</option>
+          </select>
+        </div>
+      </div>
+      <div class="chart-box" id="chart-trend"></div>
+    </div>
+
+    <div class="panel col-4">
+      <h2>订单状态分布</h2>
+      <div class="panel-desc">各状态订单数量占比</div>
+      <div class="chart-box" id="chart-status"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>品类销售额</h2>
+      <div class="panel-desc">不同材质/款式类别的销售额（R$）</div>
+      <div class="chart-box" id="chart-category"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>销量 Top 10</h2>
+      <div class="panel-desc">按售出件数排序的头部商品</div>
+      <div class="chart-box" id="chart-top-qty"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>销售额 Top 10</h2>
+      <div class="panel-desc">按销售额排序的头部商品</div>
+      <div class="chart-box" id="chart-top-rev"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>利润 Top 10</h2>
+      <div class="panel-desc">按净利润排序的头部商品</div>
+      <div class="chart-box" id="chart-top-profit"></div>
+    </div>
+
+    <div class="panel col-12">
+      <h2>库存预警</h2>
+      <div class="panel-desc">库存 ≤ 10 件的商品（含缺货）</div>
+      <ul class="insights" id="stock-warn"></ul>
+    </div>
+
+    <div class="panel col-6">
+      <h2>买家地区 Top 10</h2>
+      <div class="panel-desc">订单买家的州（巴西 UF）分布</div>
+      <div class="chart-box" id="chart-region"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>支付方式分布</h2>
+      <div class="panel-desc">订单支付方式占比</div>
+      <div class="chart-box" id="chart-payment"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>流量渠道对比</h2>
+      <div class="panel-desc">自然流量 vs 广告投放的销售额</div>
+      <div class="chart-box" id="chart-channel"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>广告投放效果</h2>
+      <div class="panel-desc">广告曝光、点击与回报</div>
+      <div class="ads-grid" id="ads-panel"></div>
+    </div>
+
+    <div class="panel col-12">
+      <h2>商品表现明细</h2>
+      <div class="panel-desc">按 SKU 汇总销量、销售额、流量与转化率，点击表头可排序</div>
+      <div class="table-wrap" style="max-height:560px;overflow:auto">
+        <table class="data-table">
+          <thead id="perf-head"></thead>
+          <tbody id="perf-body"></tbody>
+        </table>
+      </div>
+      <span id="perf-count" style="display:none"></span>
+      <div class="pager" id="pager"></div>
+    </div>
+
+    <div class="panel col-12">
+      <h2>智能解读</h2>
+      <div class="panel-desc">基于当前数据的店铺经营结论</div>
+      <ul class="insights" id="insights"></ul>
+    </div>
+
+  </section>
+</main>
+
+<footer class="app-footer">
+  数据为仿真示例，仅供演示 · 支持导入你的美客多卖家中心导出数据（CSV / JSON）
+</footer>
+
+<!-- 导入弹窗 -->
+<div class="modal-mask" id="modal-import">
+  <div class="modal">
+    <button class="mask-close" data-close aria-label="关闭">✕</button>
+    <h3>📥 导入店铺数据</h3>
+    <div class="modal-sub">支持 <b>.csv</b> 或 <b>.json</b>；导入后替换当前数据，可点「载入示例」恢复。</div>
+    <div class="drop" id="import-drop">
+      <div style="font-size:30px">📂</div>
+      <div><b>点击选择文件</b>，或将文件拖拽到此处</div>
+      <div class="muted" style="font-size:12px;margin-top:4px">推荐 UTF-8 编码</div>
+      <input type="file" id="import-file" accept=".csv,.json">
+    </div>
+    <div class="form-row">
+      <label>或直接粘贴 JSON 数据</label>
+      <textarea id="import-json" placeholder='[{"date":"2026-08-01","sku":"CAP-IP15-SIL","title":"...","qty":2,"unit_price":24.9,"revenue":49.8,"status":"Concluída","views":120,"stock":85}]'></textarea>
+    </div>
+    <div class="hint">
+      字段说明：<code>date</code>（订单日期）、<code>order_id</code>、<code>sku</code>、<code>title</code>、<code>category</code>、<code>qty</code>（件数）、
+      <code>unit_price</code>（单价）、<code>revenue</code>（销售额）、<code>shipping_fee</code>（运费）、<code>status</code>（状态）、
+      <code>views</code>（当日浏览量）、<code>stock</code>（库存）。也兼容葡语列名。
+      <button class="btn btn-soft" id="btn-template" style="padding:3px 9px;font-size:12px;margin-left:6px">⬇ 下载 CSV 模板</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close>取消</button>
+      <button class="btn btn-soft" id="btn-apply-json">载入粘贴数据</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/charts.js"></script>
+<script src="js/seller-data.js"></script>
+<script src="js/seller-app.js"></script>
+</body>
+</html>

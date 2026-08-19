@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>巴西手机壳电商数据分析 · 美客多 &amp; TikTok</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- 顶部 -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="logo">📱</div>
+      <div>
+        <h1>巴西手机壳电商数据分析</h1>
+        <div class="sub">Mercado Livre × TikTok Shop · 选品与市场洞察</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a class="btn btn-primary" href="seller.html">🏪 我的店铺后台</a>
+      <button class="btn btn-ghost" id="btn-sample">🔄 载入示例</button>
+      <button class="btn btn-ghost" id="btn-import">📥 导入数据</button>
+      <button class="btn btn-ghost" id="btn-export">📤 导出 CSV</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- 指标卡 -->
+  <section class="kpi-grid">
+    <div class="kpi-card" id="kpi-total">
+      <div class="kpi-label"><span class="kpi-icon">📦</span>商品总数</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+    <div class="kpi-card" id="kpi-price">
+      <div class="kpi-label"><span class="kpi-icon">💰</span>平均售价</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+    <div class="kpi-card" id="kpi-sales">
+      <div class="kpi-label"><span class="kpi-icon">🚚</span>总销量（估算）</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+    <div class="kpi-card" id="kpi-rating">
+      <div class="kpi-label"><span class="kpi-icon">⭐</span>平均评分</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+    <div class="kpi-card" id="kpi-reviews">
+      <div class="kpi-label"><span class="kpi-icon">💬</span>评论总数</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+    <div class="kpi-card" id="kpi-median">
+      <div class="kpi-label"><span class="kpi-icon">📊</span>价格中位数</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub"></div>
+    </div>
+  </section>
+
+  <!-- 筛选 -->
+  <section class="filter-bar">
+    <div class="filter-group">
+      <label>平台</label>
+      <select id="f-platform">
+        <option value="all">全部平台</option>
+        <option value="Mercado Livre">美客多</option>
+        <option value="TikTok Shop">TikTok Shop</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>品牌</label>
+      <select id="f-brand"></select>
+    </div>
+    <div class="filter-group">
+      <label>材质</label>
+      <select id="f-material"></select>
+    </div>
+    <div class="filter-group">
+      <label>最低评分</label>
+      <select id="f-rating">
+        <option value="0">不限</option>
+        <option value="3">3.0 分以上</option>
+        <option value="3.5">3.5 分以上</option>
+        <option value="4">4.0 分以上</option>
+        <option value="4.5">4.5 分以上</option>
+      </select>
+    </div>
+    <div class="filter-group input-price">
+      <label>价格下限（R$）</label>
+      <input id="f-min-price" type="number" min="0" placeholder="不限">
+    </div>
+    <div class="filter-group input-price">
+      <label>价格上限（R$）</label>
+      <input id="f-max-price" type="number" min="0" placeholder="不限">
+    </div>
+    <div class="filter-group search">
+      <label>关键词搜索</label>
+      <input id="f-keyword" type="text" placeholder="搜标题 / 品牌 / 机型 / 店铺…">
+    </div>
+    <button class="btn btn-soft filter-reset" id="btn-reset">↺ 重置筛选</button>
+  </section>
+
+  <!-- 汇总 -->
+  <div class="summary-strip" id="summary-strip"></div>
+  <div class="muted" id="range-info" style="font-size:12px;margin:2px 2px 14px"></div>
+
+  <!-- 图表 -->
+  <section class="charts-grid">
+
+    <div class="panel col-4">
+      <h2>平台商品占比</h2>
+      <div class="panel-desc">两个平台在售商品数量分布</div>
+      <div class="chart-box" id="chart-platform"></div>
+    </div>
+
+    <div class="panel col-4">
+      <h2>平均售价对比</h2>
+      <div class="panel-desc">各平台商品平均售价（雷亚尔 R$）</div>
+      <div class="chart-box" id="chart-avg-price"></div>
+    </div>
+
+    <div class="panel col-4">
+      <h2>平均销量 / 平均评分</h2>
+      <div class="panel-desc">评分已 ×10 便于同图对比</div>
+      <div class="legend">
+        <span class="lg-item"><span class="lg-swatch" style="background:#6366f1"></span>平均销量</span>
+        <span class="lg-item"><span class="lg-swatch" style="background:#22c55e"></span>平均评分×10</span>
+      </div>
+      <div class="chart-box" id="chart-avg-sales"></div>
+    </div>
+
+    <div class="panel col-8">
+      <h2>价格分布</h2>
+      <div class="panel-desc">各价格区间在售商品数量（R$）</div>
+      <div class="legend">
+        <span class="lg-item"><span class="lg-swatch" style="background:#f59e0b"></span>美客多</span>
+        <span class="lg-item"><span class="lg-swatch" style="background:#ec4899"></span>TikTok</span>
+      </div>
+      <div class="chart-box" id="chart-price-hist"></div>
+    </div>
+
+    <div class="panel col-4">
+      <h2>评分分布</h2>
+      <div class="panel-desc">商品评分区间分布</div>
+      <div class="legend">
+        <span class="lg-item"><span class="lg-swatch" style="background:#f59e0b"></span>美客多</span>
+        <span class="lg-item"><span class="lg-swatch" style="background:#ec4899"></span>TikTok</span>
+      </div>
+      <div class="chart-box" id="chart-rating-hist"></div>
+    </div>
+
+    <div class="panel col-4">
+      <h2>价格带平均销量</h2>
+      <div class="panel-desc">每个价格区间内商品的平均销量</div>
+      <div class="legend">
+        <span class="lg-item"><span class="lg-swatch" style="background:#f59e0b"></span>美客多</span>
+        <span class="lg-item"><span class="lg-swatch" style="background:#ec4899"></span>TikTok</span>
+      </div>
+      <div class="chart-box" id="chart-band-sales"></div>
+    </div>
+
+    <div class="panel col-8">
+      <h2>月度上新趋势</h2>
+      <div class="panel-desc">按上架月份统计的新增商品数</div>
+      <div class="legend">
+        <span class="lg-item"><span class="lg-swatch" style="background:#f59e0b"></span>美客多</span>
+        <span class="lg-item"><span class="lg-swatch" style="background:#ec4899"></span>TikTok</span>
+      </div>
+      <div class="chart-box" id="chart-monthly"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>销量 Top 10</h2>
+      <div class="panel-desc">按销量（估算）排序的头部商品</div>
+      <div class="chart-box" id="chart-top-sales"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>品牌 Top 10（按商品数）</h2>
+      <div class="panel-desc">商品数最多的品牌，及两平台分布</div>
+      <div class="chart-box" id="chart-top-brands"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>适配机型 Top 10</h2>
+      <div class="panel-desc">手机壳对应的机型，按商品数排序</div>
+      <div class="chart-box" id="chart-top-models"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>卖家 / 店铺 Top 10</h2>
+      <div class="panel-desc">在售商品数最多的卖家，及两平台分布</div>
+      <div class="chart-box" id="chart-top-sellers"></div>
+    </div>
+
+    <div class="panel col-12">
+      <h2>🏆 型号排行榜</h2>
+      <div class="panel-desc">对适配机型按所选指标排名，展示各机型商品数、售价与销量表现</div>
+      <div class="rank-toolbar">
+        <div class="filter-group">
+          <label>排序方式</label>
+          <select id="model-rank-sort">
+            <option value="n">商品数</option>
+            <option value="sales">总销量</option>
+            <option value="avgSales">平均销量</option>
+            <option value="avgRating">平均评分</option>
+            <option value="avgPrice">平均售价（低→高）</option>
+          </select>
+        </div>
+        <span class="muted" id="model-rank-count"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>排名</th><th>机型</th><th>品牌</th><th>商品数</th><th>平均售价</th>
+              <th>总销量（估算）</th><th>平均销量</th><th>平均评分</th><th>平台分布</th>
+            </tr>
+          </thead>
+          <tbody id="model-rank-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>卖家类型占比</h2>
+      <div class="panel-desc">金牌卖家 / 官方店 / 普通卖家的商品分布</div>
+      <div class="chart-box" id="chart-seller-type"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>卖家地区 Top 10</h2>
+      <div class="panel-desc">卖家所在州（巴西 UF）分布</div>
+      <div class="chart-box" id="chart-state-dist"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>颜色 Top 10</h2>
+      <div class="panel-desc">商品颜色/款式分布</div>
+      <div class="chart-box" id="chart-color-dist"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>免息分期占比</h2>
+      <div class="panel-desc">支持免息分期（sem juros）的商品占比</div>
+      <div class="chart-box" id="chart-install-free"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>价格 - 销量散点</h2>
+      <div class="panel-desc">抽样展示价格与销量关系（仅销量&gt;0）</div>
+      <div class="chart-box" id="chart-scatter"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>材质分布</h2>
+      <div class="panel-desc">不同材质/款式的商品占比</div>
+      <div class="chart-box" id="chart-materials"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>关键词 Top 15</h2>
+      <div class="panel-desc">商品标题中的高频词（葡语）</div>
+      <div class="chart-box" id="chart-keywords"></div>
+    </div>
+
+    <div class="panel col-6">
+      <h2>智能解读</h2>
+      <div class="panel-desc">基于当前筛选数据的自动分析结论</div>
+      <ul class="insights" id="insights"></ul>
+    </div>
+
+    <div class="panel col-12">
+      <h2>平台核心指标对比</h2>
+      <div class="panel-desc">绿色背景 = 该项更优的一方（价格类为低更好，其余为高更好）</div>
+      <div class="table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr><th>指标</th><th>🟡 美客多</th><th>🩷 TikTok Shop</th></tr>
+          </thead>
+          <tbody id="compare-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel col-12">
+      <h2>商品明细</h2>
+      <div class="panel-desc">点击表头可排序 · 自动分页</div>
+      <div class="table-wrap" style="max-height:560px;overflow:auto">
+        <table class="data-table">
+          <thead id="table-head"></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      <div class="pager" id="pager"><span id="table-count" style="display:none"></span></div>
+    </div>
+
+  </section>
+</main>
+
+<footer class="app-footer">
+  数据为示例/演示用途，仅供选品分析参考 · 支持导入你自己的 CSV / JSON 数据
+</footer>
+
+<!-- 导入弹窗 -->
+<div class="modal-mask" id="modal-import">
+  <div class="modal">
+    <button class="mask-close" data-close aria-label="关闭">✕</button>
+    <h3>📥 导入数据</h3>
+    <div class="modal-sub">支持 <b>.csv</b> 或 <b>.json</b> 文件；导入后替换当前数据，可随时点「载入示例」恢复。</div>
+    <div class="drop" id="import-drop">
+      <div style="font-size:30px">📂</div>
+      <div><b>点击选择文件</b>，或将文件拖拽到此处</div>
+      <div class="muted" style="font-size:12px;margin-top:4px">推荐 UTF-8 编码</div>
+      <input type="file" id="import-file" accept=".csv,.json">
+    </div>
+    <div class="form-row">
+      <label>或直接粘贴 JSON 数据</label>
+      <textarea id="import-json" placeholder='[{"platform":"Mercado Livre","title":"Capa de Celular ...","price_brl":24.9,"sales":1500,"rating":4.7}]'></textarea>
+    </div>
+    <div class="hint">
+      字段说明：<code>platform</code>（Mercado Livre / TikTok Shop）、<code>title</code>、<code>brand</code>、<code>model</code>、<code>material</code>、
+      <code>price_brl</code>、<code>sales</code>、<code>rating</code>、<code>reviews</code>、<code>seller</code>、<code>listed_date</code>、<code>shipping_free</code>。
+      <button class="btn btn-soft" id="btn-template" style="padding:3px 9px;font-size:12px;margin-left:6px">⬇ 下载 CSV 模板</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close>取消</button>
+      <button class="btn btn-soft" id="btn-apply-json">载入粘贴数据</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

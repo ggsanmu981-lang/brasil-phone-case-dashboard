@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>智能转化诊断 · 店铺卡点分析</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="logo">🔍</div>
+      <div>
+        <h1>智能转化诊断</h1>
+        <div class="sub">店铺转化率低 · 卡点自动分析与优化建议</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a class="btn btn-ghost" href="seller.html">🏪 店铺后台</a>
+      <a class="btn btn-ghost" href="index.html">📊 市场分析</a>
+      <button class="btn btn-ghost" id="btn-sample">🔄 载入示例</button>
+      <button class="btn btn-ghost" id="btn-import">📥 导入数据</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- 总得分 -->
+  <div class="score-banner" id="score-banner">
+    <div class="score-ring" id="score-ring">–</div>
+    <div class="score-info">
+      <div class="score-title" id="score-title">诊断中…</div>
+      <div class="score-desc" id="score-desc">基于当前数据自动评估店铺转化健康度</div>
+    </div>
+    <div class="score-tags" id="score-tags"></div>
+  </div>
+
+  <!-- 指标卡 -->
+  <section class="kpi-grid" style="margin-top:16px">
+    <div class="kpi-card" id="kpi-conv">
+      <div class="kpi-label"><span class="kpi-icon">🎯</span>整体转化率</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub">目标 ≥ 2%</div>
+    </div>
+    <div class="kpi-card" id="kpi-ctr">
+      <div class="kpi-label"><span class="kpi-icon">👆</span>广告点击率 CTR</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub">目标 ≥ 1.2%</div>
+    </div>
+    <div class="kpi-card" id="kpi-roas">
+      <div class="kpi-label"><span class="kpi-icon">📣</span>广告 ROAS</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub">目标 ≥ 3x</div>
+    </div>
+    <div class="kpi-card" id="kpi-bad">
+      <div class="kpi-label"><span class="kpi-icon">📉</span>取消+退货率</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub">目标 ≤ 4%</div>
+    </div>
+    <div class="kpi-card" id="kpi-ostock">
+      <div class="kpi-label"><span class="kpi-icon">📦</span>缺货率</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub">目标 ≤ 5%</div>
+    </div>
+    <div class="kpi-card" id="kpi-adshare">
+      <div class="kpi-label"><span class="kpi-icon">🔄</span>广告订单占比</div>
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub">目标 ≤ 40%</div>
+    </div>
+  </section>
+
+  <!-- 漏斗 -->
+  <section class="charts-grid" style="margin-top:16px">
+    <div class="panel col-12">
+      <h2>转化漏斗</h2>
+      <div class="panel-desc">从浏览到成交的每一步流失（数量与转化率）</div>
+      <div class="funnel-wrap">
+        <div class="funnel-title">店铺转化漏斗</div>
+        <div class="funnel" id="funnel-store"></div>
+        <div class="funnel-title mt8">广告投放漏斗</div>
+        <div class="funnel" id="funnel-ads"></div>
+      </div>
+    </div>
+
+    <div class="panel col-12">
+      <h2>卡点诊断</h2>
+      <div class="panel-desc">逐项检查转化相关指标，红色=严重卡点，黄色=警示，绿色=健康</div>
+      <div class="checks-grid" id="checks-grid"></div>
+    </div>
+
+    <div class="panel col-12">
+      <h2>商品卡点分析</h2>
+      <div class="panel-desc">按「优化潜力」排序（浏览量高但转化低 = 最值得优化），点击表头可排序</div>
+      <div class="table-wrap" style="max-height:520px;overflow:auto">
+        <table class="data-table">
+          <thead id="p-head"></thead>
+          <tbody id="p-body"></tbody>
+        </table>
+      </div>
+      <div class="pager" id="pager"><span id="p-count" style="display:none"></span></div>
+    </div>
+
+    <div class="panel col-12">
+      <h2>行动建议清单</h2>
+      <div class="panel-desc">按优先级排列的可执行优化动作</div>
+      <ol class="action-list" id="action-list"></ol>
+    </div>
+  </section>
+</main>
+
+<footer class="app-footer">
+  诊断基于当前数据自动生成，仅供参考 · 支持导入你的美客多卖家中心导出数据
+</footer>
+
+<!-- 导入弹窗 -->
+<div class="modal-mask" id="modal-import">
+  <div class="modal">
+    <button class="mask-close" data-close aria-label="关闭">✕</button>
+    <h3>📥 导入店铺数据</h3>
+    <div class="modal-sub">与店铺后台页使用同一份数据格式（订单/浏览/广告/库存）。</div>
+    <div class="drop" id="import-drop">
+      <div style="font-size:30px">📂</div>
+      <div><b>点击选择文件</b>，或将文件拖拽到此处</div>
+      <div class="muted" style="font-size:12px;margin-top:4px">推荐 UTF-8 编码</div>
+      <input type="file" id="import-file" accept=".csv,.json">
+    </div>
+    <div class="form-row">
+      <label>或直接粘贴 JSON 数据</label>
+      <textarea id="import-json" placeholder='[{"date":"2026-08-01","sku":"CAP-IP15-SIL","title":"...","qty":2,"unit_price":24.9,"revenue":49.8,"status":"Concluída","views":120,"ad_spend":2.5}]'></textarea>
+    </div>
+    <div class="hint">
+      字段说明：<code>date</code>、<code>order_id</code>、<code>sku</code>、<code>title</code>、<code>qty</code>、<code>unit_price</code>、
+      <code>revenue</code>、<code>status</code>、<code>views</code>、<code>ad_spend</code>、<code>ad_impressions</code>、<code>ad_clicks</code>、
+      <code>channel</code>、<code>profit</code>、<code>stock</code> 等（兼容葡语列名）。
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close>取消</button>
+      <button class="btn btn-soft" id="btn-apply-json">载入粘贴数据</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/charts.js"></script>
+<script src="js/seller-data.js"></script>
+<script src="js/diagnose-app.js"></script>
+</body>
+</html>
