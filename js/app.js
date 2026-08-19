@@ -6,10 +6,10 @@
 
   const ML = "Mercado Livre";
   const TT = "TikTok Shop";
-  const C_ML = "#f59e0b";
-  const C_TT = "#ec4899";
+  const C_ML = "#ffd60a";
+  const C_TT = "#ff2d78";
   const C_GRAY = "#94a3b8";
-  const C_BLUE = "#2563eb";
+  const C_BLUE = "#00e5ff";
 
   /* ---------------- 格式化 ---------------- */
   const fmtBRL = (v) => "R$ " + (v == null ? "-" : Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
@@ -310,8 +310,8 @@
     Charts.bar(els.charts.avgSales, {
       labels: ["美客多", "TikTok"],
       series: [
-        { name: "平均销量(单)", values: [sml ? sml.avgSales : 0, stt ? stt.avgSales : 0], color: "#6366f1" },
-        { name: "平均评分(×10)", values: [sml ? sml.avgRating * 10 : 0, stt ? stt.avgRating * 10 : 0], color: "#22c55e" }
+        { name: "平均销量(单)", values: [sml ? sml.avgSales : 0, stt ? stt.avgSales : 0], color: "#a855f7" },
+        { name: "平均评分(×10)", values: [sml ? sml.avgRating * 10 : 0, stt ? stt.avgRating * 10 : 0], color: "#34d399" }
       ],
       height: 240, compact: true, yLabel: ""
     });
@@ -441,7 +441,7 @@
     /* 11. 材质分布 */
     const matMap = {};
     rows.forEach((r) => { matMap[r.material] = (matMap[r.material] || 0) + 1; });
-    const PALETTE = ["#2563eb", "#7c3aed", "#0891b2", "#f59e0b", "#ec4899", "#10b981", "#f43f5e", "#8b5cf6", "#14b8a6", "#f97316", "#6366f1", "#64748b"];
+    const PALETTE = ["#00e5ff", "#7c3aed", "#0891b2", "#ffd60a", "#ff2d78", "#34d399", "#ff4d6d", "#8b5cf6", "#14b8a6", "#fb923c", "#a855f7", "#64748b"];
     const mats = Object.entries(matMap).sort((a, b) => b[1] - a[1]).slice(0, 10);
     Charts.donut(els.charts.materials, {
       items: mats.map(([k, v], i) => ({ label: k, value: v, color: PALETTE[i % PALETTE.length] })),
@@ -477,7 +477,7 @@
     rows.forEach((r) => { if (r.color) colorMap[r.color] = (colorMap[r.color] || 0) + 1; });
     const topColors = Object.entries(colorMap).sort((a, b) => b[1] - a[1]).slice(0, 10);
     Charts.hbar(els.charts.colorDist, {
-      items: topColors.map(([k, v]) => ({ label: k, value: v, color: "#6366f1" })),
+      items: topColors.map(([k, v]) => ({ label: k, value: v, color: "#a855f7" })),
       height: 300, valueFormat: fmtInt
     });
 
@@ -556,7 +556,7 @@
     const ml = statsFor(rows.filter((r) => r.platform === ML));
     const tt = statsFor(rows.filter((r) => r.platform === TT));
     const items = [];
-    const li = (ic, html) => '<li><span class="ic" style="background:#eef2ff">' + ic + "</span><span>" + html + "</span></li>";
+    const li = (ic, html) => '<li><span class="ic" style="background:rgba(0,229,255,.12)">' + ic + "</span><span>" + html + "</span></li>";
 
     if (ml && tt) {
       const priceDiff = ((tt.avgPrice - ml.avgPrice) / ml.avgPrice) * 100;

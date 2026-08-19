@@ -73,8 +73,8 @@
     const max = ticks.max;
     ticks.ticks.forEach((t) => {
       const y = pad.t + plotH - (t / max) * plotH;
-      svgEl("line", { x1: pad.l, y1: y, x2: W - pad.r, y2: y, stroke: "#eef1f7", "stroke-width": 1 }, svg);
-      const txt = svgEl("text", { x: pad.l - 8, y: y + 4, "text-anchor": "end", "font-size": 11, fill: "#8a94a6" }, svg);
+      svgEl("line", { x1: pad.l, y1: y, x2: W - pad.r, y2: y, stroke: "rgba(0,229,255,.10)", "stroke-width": 1 }, svg);
+      const txt = svgEl("text", { x: pad.l - 8, y: y + 4, "text-anchor": "end", "font-size": 11, fill: "#7d8db3" }, svg);
       txt.textContent = yFormat ? yFormat(t) : t;
     });
     // X 轴标签
@@ -85,7 +85,7 @@
       const cx = pad.l + slot * i + slot / 2;
       const txt = svgEl("text", {
         x: cx, y: H - (opts.xLabel ? 16 : 12),
-        "text-anchor": "middle", "font-size": 11, fill: "#8a94a6"
+        "text-anchor": "middle", "font-size": 11, fill: "#7d8db3"
       }, svg);
       if (rotate) {
         txt.setAttribute("transform", `rotate(-32 ${cx} ${H - 12})`);
@@ -94,7 +94,7 @@
       txt.textContent = lb;
     });
     if (opts.xLabel) {
-      const xl = svgEl("text", { x: W / 2, y: H - 2, "text-anchor": "middle", "font-size": 11.5, fill: "#8a94a6" }, svg);
+      const xl = svgEl("text", { x: W / 2, y: H - 2, "text-anchor": "middle", "font-size": 11.5, fill: "#7d8db3" }, svg);
       xl.textContent = opts.xLabel;
     }
     return { plotW, plotH, max };
@@ -110,7 +110,7 @@
     const labels = opts.labels || [];
     const series = opts.series || [];
     if (!labels.length || !series.length) {
-      const t = svgEl("text", { x: W / 2, y: H / 2, "text-anchor": "middle", "font-size": 13, fill: "#a5aebf" }, svg);
+      const t = svgEl("text", { x: W / 2, y: H / 2, "text-anchor": "middle", "font-size": 13, fill: "#5c6f9c" }, svg);
       t.textContent = "暂无数据";
       return;
     }
@@ -138,7 +138,7 @@
         }, svg);
         bindTip(container, rect, `<b>${labels[i]}</b><br/>${s.name}：${opts.yFormat ? opts.yFormat(v) : v}`);
         if (showVal && v > 0) {
-          const t = svgEl("text", { x: x + bw / 2, y: y - 5, "text-anchor": "middle", "font-size": 10.5, fill: "#64748b", "font-weight": 600 }, svg);
+          const t = svgEl("text", { x: x + bw / 2, y: y - 5, "text-anchor": "middle", "font-size": 10.5, fill: "#9fb3d8", "font-weight": 600 }, svg);
           t.textContent = opts.compact ? compactNum(v) : (opts.yFormat ? opts.yFormat(v) : v);
         }
       });
@@ -154,7 +154,7 @@
     const pad = { t: 8, r: 64, b: 8, l: 8 };
     const svg = svgEl("svg", { width: W, height: H }, container);
     if (!items.length) {
-      const t = svgEl("text", { x: W / 2, y: H / 2, "text-anchor": "middle", "font-size": 13, fill: "#a5aebf" }, svg);
+      const t = svgEl("text", { x: W / 2, y: H / 2, "text-anchor": "middle", "font-size": 13, fill: "#5c6f9c" }, svg);
       t.textContent = "暂无数据";
       return;
     }
@@ -167,13 +167,13 @@
       const y = pad.t + i * rowH + rowH * 0.14;
       const h = rowH * 0.72;
       const w = Math.max(2, (it.value / maxVal) * plotW);
-      const label = svgEl("text", { x: pad.l, y: y + h / 2 + 4, "font-size": 11.5, fill: "#4b5563" }, svg);
+      const label = svgEl("text", { x: pad.l, y: y + h / 2 + 4, "font-size": 11.5, fill: "#9fb3d8" }, svg);
       label.textContent = truncate(it.label, 22);
-      const rect = svgEl("rect", { x: pad.l + 4, y: y, width: w, height: h, rx: Math.min(4, h / 2), fill: it.color || "#2563eb", opacity: 0.9 }, svg);
-      const val = svgEl("text", { x: pad.l + 4 + w + 6, y: y + h / 2 + 4, "font-size": 11.5, fill: "#334155", "font-weight": 700 }, svg);
+      const rect = svgEl("rect", { x: pad.l + 4, y: y, width: w, height: h, rx: Math.min(4, h / 2), fill: it.color || "#00e5ff", opacity: 0.9 }, svg);
+      const val = svgEl("text", { x: pad.l + 4 + w + 6, y: y + h / 2 + 4, "font-size": 11.5, fill: "#eaf6ff", "font-weight": 700 }, svg);
       val.textContent = (opts.valueFormat ? opts.valueFormat(it.value) : it.value);
       if (it.sub) {
-        const sub = svgEl("text", { x: W - pad.r + 6, y: y + h / 2 + 4, "font-size": 10.5, fill: "#94a3b8", "text-anchor": "start" }, svg);
+        const sub = svgEl("text", { x: W - pad.r + 6, y: y + h / 2 + 4, "font-size": 10.5, fill: "#6f82ad", "text-anchor": "start" }, svg);
         sub.textContent = it.sub;
       }
       bindTip(container, rect, `<b>${it.label}</b><br/>${opts.valueFormat ? opts.valueFormat(it.value) : it.value}${it.sub ? "<br/>" + it.sub : ""}`);
@@ -189,7 +189,7 @@
     const svg = svgEl("svg", { width: W, height: H }, container);
     const items = (opts.items || []).filter((it) => it.value > 0);
     if (!items.length) {
-      const t = svgEl("text", { x: W / 2, y: H / 2, "text-anchor": "middle", "font-size": 13, fill: "#a5aebf" }, svg);
+      const t = svgEl("text", { x: W / 2, y: H / 2, "text-anchor": "middle", "font-size": 13, fill: "#5c6f9c" }, svg);
       t.textContent = "暂无数据";
       return;
     }
@@ -215,10 +215,10 @@
       angle = a1;
     });
     if (opts.centerText !== false) {
-      const c1 = svgEl("text", { x: cx, y: cy - 2, "text-anchor": "middle", "font-size": 19, "font-weight": 800, fill: "#17233d" }, svg);
+      const c1 = svgEl("text", { x: cx, y: cy - 2, "text-anchor": "middle", "font-size": 19, "font-weight": 800, fill: "#eaf6ff" }, svg);
       c1.textContent = opts.centerText || total.toLocaleString();
       if (opts.centerSub) {
-        const c2 = svgEl("text", { x: cx, y: cy + 17, "text-anchor": "middle", "font-size": 11, fill: "#8a94a6" }, svg);
+        const c2 = svgEl("text", { x: cx, y: cy + 17, "text-anchor": "middle", "font-size": 11, fill: "#7d8db3" }, svg);
         c2.textContent = opts.centerSub;
       }
     }
@@ -233,7 +233,7 @@
     const svg = svgEl("svg", { width: W, height: H }, container);
     const points = opts.points || [];
     if (!points.length) {
-      const t = svgEl("text", { x: W / 2, y: H / 2, "text-anchor": "middle", "font-size": 13, fill: "#a5aebf" }, svg);
+      const t = svgEl("text", { x: W / 2, y: H / 2, "text-anchor": "middle", "font-size": 13, fill: "#5c6f9c" }, svg);
       t.textContent = "暂无数据";
       return;
     }
@@ -248,19 +248,19 @@
     // 网格
     for (let i = 0; i <= 4; i++) {
       const y = pad.t + (plotH / 4) * i;
-      svgEl("line", { x1: pad.l, y1: y, x2: W - pad.r, y2: y, stroke: "#eef1f7" }, svg);
-      const t = svgEl("text", { x: pad.l - 8, y: y + 4, "text-anchor": "end", "font-size": 11, fill: "#8a94a6" }, svg);
+      svgEl("line", { x1: pad.l, y1: y, x2: W - pad.r, y2: y, stroke: "rgba(0,229,255,.10)" }, svg);
+      const t = svgEl("text", { x: pad.l - 8, y: y + 4, "text-anchor": "end", "font-size": 11, fill: "#7d8db3" }, svg);
       t.textContent = opts.yFormat ? opts.yFormat(yMin + ((yMax - yMin) / 4) * i) : Math.round(yMin + ((yMax - yMin) / 4) * i);
     }
     for (let i = 0; i <= 4; i++) {
       const x = pad.l + (plotW / 4) * i;
-      svgEl("line", { x1: x, y1: pad.t, x2: x, y2: H - pad.b, stroke: "#eef1f7" }, svg);
-      const t = svgEl("text", { x: x, y: H - pad.b + 16, "text-anchor": "middle", "font-size": 11, fill: "#8a94a6" }, svg);
+      svgEl("line", { x1: x, y1: pad.t, x2: x, y2: H - pad.b, stroke: "rgba(0,229,255,.10)" }, svg);
+      const t = svgEl("text", { x: x, y: H - pad.b + 16, "text-anchor": "middle", "font-size": 11, fill: "#7d8db3" }, svg);
       t.textContent = opts.xFormat ? opts.xFormat(xMin + ((xMax - xMin) / 4) * i) : Math.round(xMin + ((xMax - xMin) / 4) * i);
     }
-    const xl = svgEl("text", { x: W / 2, y: H - 2, "text-anchor": "middle", "font-size": 11.5, fill: "#8a94a6" }, svg);
+    const xl = svgEl("text", { x: W / 2, y: H - 2, "text-anchor": "middle", "font-size": 11.5, fill: "#7d8db3" }, svg);
     xl.textContent = opts.xLabel || "";
-    const yl = svgEl("text", { x: 14, y: pad.t + plotH / 2, "text-anchor": "middle", "font-size": 11.5, fill: "#8a94a6", transform: `rotate(-90 14 ${pad.t + plotH / 2})` }, svg);
+    const yl = svgEl("text", { x: 14, y: pad.t + plotH / 2, "text-anchor": "middle", "font-size": 11.5, fill: "#7d8db3", transform: `rotate(-90 14 ${pad.t + plotH / 2})` }, svg);
     yl.textContent = opts.yLabel || "";
     points.forEach((p) => {
       const c = svgEl("circle", {

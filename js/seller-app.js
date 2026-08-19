@@ -4,8 +4,8 @@
 (function () {
   "use strict";
 
-  const C_ML = "#f59e0b";
-  const C_BLUE = "#2563eb";
+  const C_ML = "#ffd60a";
+  const C_BLUE = "#00e5ff";
   const C_GRAY = "#94a3b8";
   const STATUS_CN = { "Concluída": "已完成", "Enviada": "已发货", "Pendente": "待处理", "Cancelada": "已取消", "Devolvida": "已退货" };
 
@@ -244,7 +244,7 @@
     if (!rows.length) { els.charts.status.innerHTML = '<div class="center muted" style="padding:40px 0">暂无数据</div>'; return; }
     const map = {};
     rows.forEach((r) => { map[r.status] = (map[r.status] || 0) + 1; });
-    const PALETTE = ["#10b981", "#2563eb", "#f59e0b", "#f43f5e", "#8b5cf6", "#94a3b8"];
+    const PALETTE = ["#34d399", "#00e5ff", "#ffd60a", "#ff4d6d", "#8b5cf6", "#94a3b8"];
     const items = Object.entries(map).sort((a, b) => b[1] - a[1]);
     Charts.donut(els.charts.status, {
       items: items.map(([k, v], i) => ({ label: STATUS_CN[k] || k, value: v, color: PALETTE[i % PALETTE.length] })),
@@ -308,7 +308,7 @@
     const items = productStats(State.rows).sort((a, b) => b.profit - a.profit).slice(0, 10);
     if (!items.length) { els.charts.profitTop.innerHTML = '<div class="center muted" style="padding:40px 0">暂无数据</div>'; return; }
     Charts.hbar(els.charts.profitTop, {
-      items: items.map((d) => ({ label: d.title || d.sku, value: d.profit, color: "#10b981", sub: d.sku + " · 利润率 " + (d.margin ? d.margin.toFixed(0) : 0) + "%" })),
+      items: items.map((d) => ({ label: d.title || d.sku, value: d.profit, color: "#34d399", sub: d.sku + " · 利润率 " + (d.margin ? d.margin.toFixed(0) : 0) + "%" })),
       height: 330, valueFormat: (v) => "R$" + Math.round(v)
     });
   }
@@ -330,7 +330,7 @@
     if (!rows.length) { els.charts.payment.innerHTML = '<div class="center muted" style="padding:40px 0">暂无数据</div>'; return; }
     const map = {};
     rows.forEach((r) => { if (r.payment) map[r.payment] = (map[r.payment] || 0) + 1; });
-    const PALETTE = ["#10b981", "#2563eb", "#f59e0b", "#ec4899", "#8b5cf6", "#94a3b8"];
+    const PALETTE = ["#34d399", "#00e5ff", "#ffd60a", "#ff2d78", "#8b5cf6", "#94a3b8"];
     const items = Object.entries(map).sort((a, b) => b[1] - a[1]);
     Charts.donut(els.charts.payment, {
       items: items.map(([k, v], i) => ({ label: k, value: v, color: PALETTE[i % PALETTE.length] })),
@@ -367,14 +367,14 @@
     const ul = els.stockWarn;
     const list = productStats(State.rows).filter((d) => d.stock != null && d.stock <= 10).sort((a, b) => a.stock - b.stock);
     if (!list.length) {
-      ul.innerHTML = '<li><span class="ic" style="background:#eef2ff">✅</span><span>库存充足，暂无预警商品</span></li>';
+      ul.innerHTML = '<li><span class="ic" style="background:rgba(0,229,255,.12)">✅</span><span>库存充足，暂无预警商品</span></li>';
       return;
     }
     ul.innerHTML = list.slice(0, 12).map((d) => {
       const badge = d.stock <= 0
         ? '<span class="platform-badge tt">缺货</span>'
         : '<span class="platform-badge ml">低库存 ' + d.stock + "</span>";
-      return '<li><span class="ic" style="background:#fef3c7">⚠️</span><span><b>' + esc(d.title || d.sku) + "</b> · " + esc(d.sku) + " " + badge + "</span></li>";
+      return '<li><span class="ic" style="background:rgba(255,214,10,.15)">⚠️</span><span><b>' + esc(d.title || d.sku) + "</b> · " + esc(d.sku) + " " + badge + "</span></li>";
     }).join("");
   }
 
@@ -463,7 +463,7 @@
     const s = statsFor(rows);
     const prods = productStats(rows);
     const items = [];
-    const li = (ic, html) => '<li><span class="ic" style="background:#eef2ff">' + ic + "</span><span>" + html + "</span></li>";
+    const li = (ic, html) => '<li><span class="ic" style="background:rgba(0,229,255,.12)">' + ic + "</span><span>" + html + "</span></li>";
     const d = daysIn(rows);
     items.push(li("📅", "统计区间共 <b>" + d + " 天</b>，平均日销售额 <span class='num'>" + fmtBRL(s.revenue / d) + "</span>，平均每日订单 <span class='num'>" + (s.orders / d).toFixed(1) + "</span> 单。"));
     const dayMap = {};

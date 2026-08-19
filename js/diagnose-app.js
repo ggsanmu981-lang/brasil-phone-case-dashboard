@@ -208,7 +208,7 @@
     els.banner.title.textContent = "总体诊断：" + a.grade + "（" + a.overall + " 分）";
     els.banner.desc.textContent = "共发现 " + a.badCount + " 个严重卡点、" + a.warnCount + " 个警示项" +
       (a.worst.length ? "，最需优先处理：" + a.worst.map((c) => c.title).join("、") + "。" : "，整体表现健康。");
-    els.banner.ring.style.background = a.overall >= 80 ? "#10b981" : a.overall >= 65 ? "#f59e0b" : a.overall >= 50 ? "#f97316" : "#ef4444";
+    els.banner.ring.style.background = a.overall >= 80 ? "#34d399" : a.overall >= 65 ? "#ffd60a" : a.overall >= 50 ? "#fb923c" : "#ff4d6d";
     els.banner.tags.innerHTML = a.checks.filter((c) => c.status !== "good").map((c) =>
       '<span class="tag tag-' + c.status + '">' + c.icon + " " + c.title + "</span>").join("");
   }
@@ -249,7 +249,7 @@
       '<span class="check-title">' + esc(c.title) + "</span>" +
       '<span class="check-status ' + c.status + '">' + (c.status === "good" ? "健康" : c.status === "warn" ? "警示" : "卡点") + "</span></div>" +
       '<div class="check-value">' + c.value + ' <span class="muted">· ' + c.target + "</span></div>" +
-      '<div class="check-score-bar"><div class="check-score-fill" style="width:' + c.score + '%;background:' + (c.score >= 80 ? "#10b981" : c.score >= 60 ? "#f59e0b" : "#ef4444") + '"></div></div>' +
+      '<div class="check-score-bar"><div class="check-score-fill" style="width:' + c.score + '%;background:' + (c.score >= 80 ? "#34d399" : c.score >= 60 ? "#ffd60a" : "#ff4d6d") + '"></div></div>' +
       '<div class="check-advice">' + esc(c.advice) + "</div>" +
       "</div>"
     ).join("");
